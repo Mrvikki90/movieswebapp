@@ -14,7 +14,7 @@ const Signup = () => {
 
 
     const handelSignup = () => {
-        let Url = "";
+        let Url = "http://localhost:8080/users/create";
         axios.post(Url, {
             name: name,
             email: email,

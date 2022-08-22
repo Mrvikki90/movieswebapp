@@ -24,6 +24,18 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
 
+  const handelLogin = async (data: any) => {
+    let Url = "http://localhost:8080/auth/login";
+    let result = await axios.post(Url, data)
+    localStorage.setItem("auth", result.data)
+    if (result.data) {
+      navigate('/');
+    } else {
+      alert("wrong credentials")
+    }
+  }
+
+
   const alertModal2 = (data: any) => {
     Swal.fire({
       toast: true,
@@ -33,6 +45,7 @@ const Login = () => {
       icon: 'success',
     }).then((result: { isConfirmed: boolean}) => {
       if (result.isConfirmed == true) {
+        handelLogin(data);
       }
     });
   }

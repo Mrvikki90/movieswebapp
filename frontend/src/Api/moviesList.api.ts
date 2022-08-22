@@ -1,11 +1,11 @@
 import axios from "axios"
 
-import { moviesData } from "../interfaces/movieslist.interface";
-
-export const  moviesList = async() =>  {
-    const result: { data: moviesData[] } = await axios.get("http://localhost:8080/movies/allmovies");
+export const getMovies = async () => {
+    const result = await axios.get("http://localhost:8080/movies/allmovies");
+    console.log(result.data);
     return result.data;
+  }
 
-}
+
 
 
