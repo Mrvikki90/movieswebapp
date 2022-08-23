@@ -2,7 +2,7 @@ import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, Text } from 
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from 'react-router-dom'
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 
@@ -15,7 +15,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const { register, handleSubmit,  formState: { errors } } = useForm<inputs>({
+  const { register, handleSubmit, formState: { errors } } = useForm<inputs>({
     reValidateMode: 'onChange'
   });
 
@@ -43,7 +43,7 @@ const Login = () => {
       title: 'Good job!',
       text: 'login Successfully',
       icon: 'success',
-    }).then((result: { isConfirmed: boolean}) => {
+    }).then((result: { isConfirmed: boolean }) => {
       if (result.isConfirmed == true) {
         handelLogin(data);
       }
@@ -53,7 +53,7 @@ const Login = () => {
   return (
     <>
       <Flex h="100vh" alignItems="center" justifyContent="center"  >
-          <Box  borderRadius={8} p={12} boxShadow="2xl" rounded="3xl" bgColor="linkedin.100" >
+        <Box borderRadius={8} p={12} boxShadow="2xl" rounded="3xl" bgColor="linkedin.100" >
           <Heading mb={6}>Login Account </Heading>
           <FormControl display={'grid'} marginTop={'10'} alignItems={'center'} justifyContent={'center'} >
             <FormLabel>Email address</FormLabel>
@@ -72,7 +72,7 @@ const Login = () => {
             </Button>
             <Link to={'/signup'} > Dont Have An Account ? Click Here </Link>
           </FormControl>
-          </Box>
+        </Box>
       </Flex>
 
 

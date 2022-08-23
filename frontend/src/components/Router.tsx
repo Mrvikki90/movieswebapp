@@ -5,29 +5,28 @@ import Nav from './Nav'
 import Login from './Login'
 import Signup from './SignUp'
 import Home from './Home'
-import Watchedmovies from './Watchedmovies'
-import Rratedmovies from './Rratedmovies'
-
-
+import RatedMovies from './RatedMovies'
+import WatchedMovies from './WatchedMovies'
+import PrivateComponent from './PrivateComponent'
 
 
 const Router = () => {
 
   return (
-   <>
-   <Nav/>
-   <Routes>
-   <Route path = {HOME_ROUTE} element={<Home/>}/>
-    <Route path = {LOGIN_ROUTE} element={<Login/>}/>
-    <Route path = {SIGNUP_ROUTE} element={<Signup/>}/>
-    <Route path = {WATCHED_ROUTE} element={<Watchedmovies/>}/>
-    <Route path = {RATED_ROUTE} element={<Rratedmovies/>}/>
+    <>
+      <Nav />
+      <Routes>
+        <Route element={<PrivateComponent />}>
+          <Route path={WATCHED_ROUTE} element={<WatchedMovies />} />
+          <Route path={RATED_ROUTE} element={<RatedMovies />} />
+        </Route>
+        <Route path={HOME_ROUTE} element={<Home />} />
+        <Route path={LOGIN_ROUTE} element={<Login />} />
+        <Route path={SIGNUP_ROUTE} element={<Signup />} />
 
 
-
-    
-   </Routes> 
-   </>
+      </Routes>
+    </>
   )
 }
 

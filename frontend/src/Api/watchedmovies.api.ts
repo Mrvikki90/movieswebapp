@@ -1,5 +1,6 @@
 import axios from "axios"
-import { watchlist } from "../interfaces/watchlist.interface";
+
+import { watchlist } from "../interfaces/WatchList.interface";
 
 export const watchedMovies = async ( movie : watchlist) => {
     const token = localStorage.getItem('auth');
@@ -15,7 +16,7 @@ export const watchedMovies = async ( movie : watchlist) => {
 
 export const getWatchedMovies =  async () => {
     const token = localStorage.getItem('auth');
-    const movies = await axios.get("http://localhost:8080/watchedlist/movies",
+    const movies = await axios.get("http://localhost:8080/watchedlist/moviesallmovies",
     {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -33,6 +34,5 @@ export const deleteWatchedMovies = async (id:number) => {
             Authorization: `Bearer ${token}`,
         }
     })
-    console.log(movies);
     return movies.data;
 }   

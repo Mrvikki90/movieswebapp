@@ -1,31 +1,21 @@
-import { Box, Button, Grid, Image, Text } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
+import { Box, Grid, Image, Text } from "@chakra-ui/react"
 
-import { getWatchedMovies } from "../Api/watchedmovies.api"
-import { watchlist } from "../interfaces/watchlist.interface"
+import useWatchedMovies from "../Hooks/useWatchedMovies"
+import { watchlist } from "../interfaces/WatchList.interface";
 
 
-const Watchedmovies = () => {
+const WatchedMovies = () => {
 
-  useEffect(() => {
-    getmovie();
-  }, [])
 
-  const [watchedMovies, setWatchedMovies] = useState<any>();
- 
-console.log(watchedMovies);
+  const { watchedMoviesList } = useWatchedMovies()
 
-  const getmovie = async () => {
-    const data = await getWatchedMovies();
-    setWatchedMovies(data);
-  }
 
   return (
     <>
 
       <Grid templateColumns='repeat(3, 1fr)' gap={1}>
         {
-          watchedMovies && watchedMovies.map((elem: watchlist, index: string) => {
+          watchedMoviesList && watchedMoviesList.map((elem: watchlist, index: string) => {
             return (
               <Box maxW='15rem' bg="white" borderWidth='1px' margin="auto" borderRadius='lg' overflow='hidden' key={index}>
                 <Image maxH="20rem" src={elem.movieImage} alt={"image"} />
@@ -47,4 +37,4 @@ console.log(watchedMovies);
   )
 }
 
-export default Watchedmovies
+export default WatchedMovies
