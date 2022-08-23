@@ -1,12 +1,13 @@
-import { Box, Button, Image, ButtonGroup, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, Heading, Input, Spacer, Text, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Image, ButtonGroup, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, Flex, Heading, Input, Spacer, Text, useDisclosure, FormControl, RadioGroup, Stack, Radio } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getWatchlist } from '../Api/watchlist.api';
-import React, { useEffect, useState } from 'react';
-import { watchlist } from '../interfaces/watchlist.interface';
-import { moviesData } from '../interfaces/movieslist.interface';
-import { watchedMovies } from '../Api/watchedmovies.api';
-import { ratedMovies } from '../Api/ratedmovies.api';
-import useWatchedMovies from '../Hooks/watchedmovies.hook';
+import { MdStarBorder } from 'react-icons/md';
+import { useState } from 'react';
+
+import { watchlist } from "../interfaces/WatchList.interface";
+import useWatchedMovies from '../Hooks/useWatchedMovies';
+import useWatchlistMovies from '../Hooks/useWatchlist';
+import useRatedMoviesHook from '../Hooks/useRatedmovies';
+
 const Nav = () => {
   const navigate = useNavigate();
   const auth = localStorage.getItem('auth');
@@ -15,30 +16,21 @@ const Nav = () => {
     navigate('/');
   }
 
-  useEffect(() => {
-    getmoviesData();
-   },[])
-  
-   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [wishlist, setwishlist] = useState<any>()
+  const [value, setValue] = useState<any>(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [movieId, setMovieId] = useState<number>();
   const [movieName, setMovieName] = useState<string>();
   const [movieImage, setMovieImage] = useState<string>();
 
+  const { watchlistmovies } = useWatchlistMovies()
 
 
 
-  const getmoviesData = async () => {
-    const result = await getWatchlist()
-    setwishlist(result);
-    return result;
-  }
 
-  
-  const {watchedMovieMutation} = useWatchedMovies();
-  
-  const handelWatched = async (a:number , b : string , c : string ) => {
+
+  const { watchedMovieMutation } = useWatchedMovies();
+  const handelWatched = (a: number, b: string, c: string) => {
     setMovieId(a)
     setMovieName(b)
     setMovieImage(c)
@@ -46,24 +38,28 @@ const Nav = () => {
     const movie = { movieId: a, movieName: b, movieImage: c }
     console.log(movie);
     watchedMovieMutation.mutate(movie);
-
-    // const result = await watchedMovies(movie);
-    // console.log(result.data)
-    // return result
   }
 
-
-  const handelRated = async (a:number , b : string , c : string) => {
+  const { ratedMovieMutation } = useRatedMoviesHook()
+  const handelRated = async (a: number, b: string, c: string, value: number) => {
     setMovieId(a)
     setMovieName(b)
     setMovieImage(c)
-    
-    const movie = { movieId: a, movieName: b, movieImage: c }
+
+    const movie = { movieId: a, movieName: b, movieImage: c, ratings: value }
     console.log(movie);
-    const result = await ratedMovies(movie);
-    console.log(result.data)
-    return result
+    ratedMovieMutation.mutate(movie);
+    alert("ratings submitted");
   }
+
+
+  // const { rateMovieMutation } = useRatings();
+  // const handelRate = (id: number, ratings: number) => {
+  //     const data = { id: id, ratings: Number(ratings) }
+  //     console.log(data);
+  //     rateMovieMutation.mutate(data)
+  //     alert("ratings submitted");
+  // }
 
 
   return (
@@ -85,11 +81,11 @@ const Nav = () => {
               <Link to='/signup'> <Button bg={'#FFFAFA'}>Sign Up</Button> </Link>
               <Link to='/login'> <Button bg={'#FFFAFA'}>Log in</Button></Link>
               <Box marginTop="2">
-              <Link to='/login'>Watchlist</Link>
+                <Link to='/login'>Watchlist</Link>
               </Box>
             </>
           }
-       
+
         </ButtonGroup>
       </Flex>
       <Drawer
@@ -105,7 +101,9 @@ const Nav = () => {
           <DrawerBody>
 
             {
-              wishlist && wishlist.allMovies.map((elem: watchlist, index: string) => {
+              watchlistmovies && watchlistmovies.map((elem: watchlist, index: string) => {
+
+
                 return (
                   <Box maxW='15rem' bg="white" borderWidth='1px' margin="auto" borderRadius='lg' overflow='hidden' key={index}>
                     <Image maxH="20rem" src={elem.movieImage} alt={"image"} />
@@ -114,13 +112,24 @@ const Nav = () => {
                         <Text textAlign={"center"} fontSize="medium">{elem.movieName}</Text>
                       </Box>
                       <Box display="flex" justifyContent={"space-between"}>
-                        <Button onClick={()=>handelWatched(elem.movieId, elem.movieName ,elem.movieImage)}
-                        size='xs' bgColor="yellow.500" variant='outline'>Add watched</Button >
-                        <Button  onClick={()=>handelRated(elem.movieId, elem.movieName ,elem.movieImage)} paddingLeft="5" 
-                         size='xs' bgColor="yellow.500" variant='outline'>Add to Rated</Button>
+                        <Button onClick={() => handelWatched(elem.movieId, elem.movieName, elem.movieImage)}
+                          size='xs' bgColor="yellow.500" variant='outline'>Add watched</Button >
+                  
                       </Box>
-                      <Button 
-                       size='xs' bgColor="yellow.500" variant='outline'>Rate movie</Button>
+                      <FormControl marginTop={"5"}>
+                        <RadioGroup onChange={setValue} value={value}>
+                          <Stack direction='row'>
+                            <Radio value='1'><MdStarBorder /></Radio>
+                            <Radio value='2'><MdStarBorder /></Radio>
+                            <Radio value='3'><MdStarBorder /></Radio>
+                            <Radio value='4'><MdStarBorder /></Radio>
+                            <Radio value='5'><MdStarBorder /></Radio>
+                          </Stack>
+                        </RadioGroup>
+                        <Button onClick={() => handelRated(elem.movieId, elem.movieName, elem.movieImage, value)}
+                          size='xs' bgColor="yellow.500" variant='outline'> Rate movie
+                        </Button>
+                      </FormControl>
                     </Box>
                   </Box>
                 )

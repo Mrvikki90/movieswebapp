@@ -1,12 +1,13 @@
-import { Badge, Box, Button, FormControl, Input, Stack, Image, Grid, Text, useDisclosure, Flex, UnorderedList, ListItem, RangeSlider, RangeSliderTrack, RangeSliderFilledTrack, RangeSliderThumb, RadioGroup, Radio } from "@chakra-ui/react";
+import { Box, Button, FormControl, Input, Stack, Image, Grid, Text, useDisclosure, Flex, UnorderedList, ListItem } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, } from '@chakra-ui/react'
-import { MdStarBorder } from 'react-icons/md';
+import { Link } from "react-router-dom";
+
 import { moviesDetails } from "../Api/getmoviesdetails.api";
-import { watchList } from "../Api/watchlist.api";
-import useMoviesData from "../Hooks/movies.data.hook";
-import { moviesData } from "../interfaces/movieslist.interface";
-import useRatings from "../Hooks/ratings.hook";
+import { getMovies } from "../Api/moviesList.api";
+import { moviesData } from "../interfaces/MoviesList.interface";
+import useWatchlistMovies from "../Hooks/useWatchlist";
+
 
 
 const Home = () => {
@@ -14,7 +15,7 @@ const Home = () => {
     const auth = localStorage.getItem("auth");
 
     useEffect(() => {
-        // handelView(id);
+        getList();
     }, [])
 
     const [moviesData, setmoviesData] = useState<any>();
@@ -24,65 +25,54 @@ const Home = () => {
     const [movieName, setMovieName] = useState<string>();
     const [movieImage, setMovieImage] = useState<string>();
 
-   
+    const [moviessList, setmoviessList] = useState<any>();
 
-    const { moviessList } = useMoviesData();
-    console.log(moviessList);
-
-    const [inputText, setInputText] = useState("");
-    const [value, setValue] = useState<any>(0);
-
-
-
-    const { rateMovieMutation } = useRatings();
-    const handelRate = (id: number, ratings: number) => {
-        const data = { id: id, ratings: Number(ratings) }
-        console.log(data);
-         rateMovieMutation.mutate(data)
+    const getList = async () => {
+        const data = await getMovies()
+        setmoviessList(data);
+        return data;
     }
 
-        
-    
-    let inputHandler = (e: { target: { value: string; }; }) => {
-        var lowerCase = e.target.value.toLowerCase();
+
+    const [inputText, setInputText] = useState("");
+    let inputHandler = (e :any) => {
+        var lowerCase = e.target.value
         setInputText(lowerCase);
     };
 
-    
+
     const handelView = async (id: number) => {
         const result = await moviesDetails(id)
         setmoviesData(result);
         onOpen()
     };
 
-    const watchlistHandel = () => {}
 
-    // const watchlistHandel = async (a: number, b: string, c: string) => {
-    //     setMovieId(a)
-    //     setMovieName(b)
-    //     setMovieImage(c)
+    const { watchlistMutation } = useWatchlistMovies();
+    const watchlistHandel = async (a: number, b: string, c: string) => {
+        setMovieId(a)
+        setMovieName(b)
+        setMovieImage(c)
 
-    //     const movie = { movieId: a, movieName: b, movieImage: c }
-    //     console.log(movie);
-    //     const result = await watchList(movie);
-    //     return result;
+        const movie = { movieId: a, movieName: b, movieImage: c }
+        console.log(movie);
+        watchlistMutation.mutate(movie);
 
-    // }
+
+    }
 
     return (
         <>
-            <Stack marginTop={"1rem"} spacing={3}>
                 <FormControl display={'flex'} alignItems='center' justifyContent={'center'}>
                     <Input onChange={inputHandler}
                         id='search' border="2px" borderRadius="3xl" borderColor="black" type='search' placeholder='Search Movies' w={'80'} />
                 </FormControl>
-            </Stack>
             <>
-                <Grid bgColor="darkcyan" templateColumns='repeat(3, 1fr)' gap={1}>
+                <Grid bgColor="gray.500" templateColumns='repeat(3, 1fr)' gap={1}>
 
                     {
                         inputText === "" ?
-                        moviessList && moviessList.map((elem: moviesData, index: string) => {
+                            moviessList && moviessList.map((elem: moviesData, index: string) => {
                                 return (
                                     <Box maxW='15rem' bg="white" borderWidth='1px' margin="auto" borderRadius='lg' overflow='hidden' key={index}>
                                         <Image maxH="20rem" src={elem.ThumbnailImage} alt={"image"} />
@@ -97,21 +87,17 @@ const Home = () => {
                                             </Box>
 
                                             <Box display="flex" alignItems={"center"} justifyContent={"space-between"}>
-                                                {/* {auth ?
-                                                    <>
-                                                        <Button onClick={() => handelView(elem.id)}
-                                                            size='xs' bgColor="yellow.500" variant='outline'>View</Button>
+                                                {
+                                                    auth ?
                                                         <Button onClick={() => watchlistHandel(elem.id, elem.MoviesName, elem.ThumbnailImage)}
                                                             size='xs' bgColor="yellow.500" variant='outline'>Add watch later</Button>
-                                                    </>
-                                                    : */}
-                                                    <>
-                                                        <Button onClick={() => handelView(elem.id)}
-                                                            size='xs' bgColor="yellow.500" variant='outline'>View</Button>
-                                                        <Button onClick={() => watchlistHandel()}
-                                                            size='xs' bgColor="yellow.500" variant='outline'>Add watch later</Button>
-                                                    </>
-                                                {"}"}
+                                                        :
+                                                        <>
+                                                            <Button onClick={() => handelView(elem.id)}
+                                                                size='xs' bgColor="yellow.500" variant='outline'>View</Button>
+                                                            <Link to={'/login'} >Add to Watchlater</Link>
+                                                        </>
+                                                }
                                             </Box>
                                         </Box>
                                     </Box>
@@ -139,7 +125,7 @@ const Home = () => {
                                                             <>
                                                                 <Button onClick={() => handelView(elem.id)}
                                                                     size='xs' bgColor="yellow.500" variant='outline'>View</Button>
-                                                                <Button onClick={() => watchlistHandel()}
+                                                                <Button onClick={() => watchlistHandel(elem.id, elem.MoviesName, elem.ThumbnailImage)}
                                                                     size='xs' bgColor="yellow.500" variant='outline'>Add to watch later</Button>
                                                             </>
                                                         }
@@ -170,21 +156,6 @@ const Home = () => {
                                         </UnorderedList>
                                         </Flex>
                                     </Flex>
-                                    <FormControl marginTop={"5"}>
-                                        <RadioGroup onChange={setValue} value={value}>
-                                            <Stack direction='row'>
-                                                <Radio value='1'><MdStarBorder /></Radio>
-                                                <Radio value='2'><MdStarBorder /></Radio>
-                                                <Radio value=''><MdStarBorder /></Radio>
-                                                <Radio value='4'><MdStarBorder /></Radio>
-                                                <Radio value='5'><MdStarBorder /></Radio>
-                                            </Stack>
-                                        </RadioGroup>
-                                        
-                                        <Button onClick={() => handelRate(moviesData.id, value)}
-                                            size='xs' bgColor="yellow.500" variant='outline'> Rate
-                                        </Button>
-                                    </FormControl>
                                 </>
                             }
                         </ModalBody>

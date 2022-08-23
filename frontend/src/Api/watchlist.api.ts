@@ -1,5 +1,6 @@
 import axios from "axios"
-import { watchlist } from "../interfaces/watchlist.interface";
+
+import { watchlist } from "../interfaces/WatchList.interface";
 
 
 export const watchList = async (movies: watchlist) => {

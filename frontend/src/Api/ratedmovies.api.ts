@@ -1,5 +1,6 @@
 import axios from "axios"
-import { watchlist } from "../interfaces/watchlist.interface";
+
+import { watchlist } from "../interfaces/WatchList.interface";
 
 export const ratedMovies = async ( movie : watchlist) => {
     const token = localStorage.getItem('auth');
@@ -33,7 +34,7 @@ export const deleteratedMovies = async (id:number) => {
             Authorization: `Bearer ${token}`,
         }
     })
-    console.log(movies);
+
     return movies.data;
 }
 
@@ -81,6 +82,7 @@ export const updateRatings = async (movieId : number , ratings : number) => {
     }); 
     return result.data;
 }
+
 
 
 
