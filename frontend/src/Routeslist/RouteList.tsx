@@ -1,6 +1,10 @@
 
-export const HomePage_route = '/';
+export const HOME_ROUTE = '/';
 
-export const Login_Route = '/login';
+export const LOGIN_ROUTE = '/login';
 
-export const SignUp_Route = '/signup';
+export const SIGNUP_ROUTE = '/signup';
+
+export const WATCHED_ROUTE = '/watchedmovies'
+
+export const RATED_ROUTE = '/ratedmovies'

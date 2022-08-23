@@ -1,5 +1,5 @@
 import { Button, Flex, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react';
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Swal from 'sweetalert2';
@@ -14,7 +14,7 @@ const Signup = () => {
 
 
     const handelSignup = () => {
-        let Url = "";
+        let Url = "http://localhost:8080/users/create";
         axios.post(Url, {
             name: name,
             email: email,
